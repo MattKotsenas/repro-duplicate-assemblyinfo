@@ -11,15 +11,13 @@ public class UnitTest1 : MSBuildTestBase
         FileSystem fs = new();
         using (fs.CreateDisposableDirectory(out IDirectoryInfo temp))
         {
-            Uri[] feeds = new[]
-            {
-                    new Uri("https://api.nuget.org/v3/index.json")
-            };
+            Uri[] feeds = [ new Uri("https://api.nuget.org/v3/index.json") ];
 
             using (PackageRepository.Create(temp.FullName, feeds))
             {
                 var projectCreator = ProjectCreator.Templates.SdkCsproj()
-                    //.Property("GenerateAssemblyInfo", "false") // Double-building results in duplicate defintions of assembly info. Since our tests don't rely on assembly info, skip generating it
+                    // Add this commented out code to prevent automatic generation of Assembly info and see the test pass.
+                    //.Property("GenerateAssemblyInfo", "false")
                     .Save(Path.Combine(temp.FullName, "ClassLibraryA", "ClassLibraryA.csproj"));
 
                 projectCreator.TryBuild(restore: true, out bool initialBuildResult, out BuildOutput output);
